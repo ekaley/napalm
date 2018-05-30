@@ -341,7 +341,6 @@ class EOSDriver(NetworkDriver):
     def get_lldp_neighbors(self):
         commands = ['show lldp neighbors']
         output = self.device.run_commands(commands)[0]['lldpNeighbors']
-
         lldp = {}
 
         for n in output:
@@ -356,6 +355,41 @@ class EOSDriver(NetworkDriver):
             )
 
         return lldp
+
+    ### Were Adding this thing here about vlans
+    def get_vlan(self):
+        commands = ['show vlan']
+        output = self.device.run_commands(commands)[0]['vlans']
+        # print(output)
+        vlan = {}
+
+
+        for n, val in output.items():
+            # print(n)
+            # print(val)
+
+
+            # print(val['name'])
+            if n not in vlan.keys():
+                vlan[n] = []
+
+
+            ports = []
+            for i in val['interfaces'].keys():
+                # print(i)
+                ports.append(i)
+            # sort this array in string order
+            ports.sort()
+            vlan[n].append(
+                {
+                    'name': val['name'],
+                    'status': val['status'],
+                    'ports': ports,
+                }
+            )
+
+        # print(vlan)
+        return vlan
 
     def get_interfaces_counters(self):
         commands = ['show interfaces']
